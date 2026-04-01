@@ -14,8 +14,9 @@
     <section id="login-view" class="login-panel">
       <div class="login-card">
         <p class="eyebrow">ChromoLab</p>
-        <h1>訓練與標註後台</h1>
-        <p class="muted">支援分權限、資料上傳、線上標註、模型比較與持續優化。</p>
+        <h1>標註、訓練與研究營運後台</h1>
+        <p class="muted">以染色體影像為示範，但真正的核心是讓資料治理、AI 訓練、測試驗證與研究方向可以被同一套流程管理。</p>
+        <p class="muted"><a href="/" class="inline-link">先看中文版介紹頁</a></p>
         <form id="login-form" class="stack">
           <label>
             <span>帳號</span>
@@ -35,10 +36,11 @@
       <header class="topbar">
         <div>
           <p class="eyebrow">ChromoLab Ops Portal</p>
-          <h2>染色體模型持續優化平台</h2>
+          <h2>標註、訓練、驗證與研究導航平台</h2>
         </div>
         <div class="topbar-actions">
           <div id="user-pill" class="pill"></div>
+          <a class="btn-secondary" href="/">中文版介紹</a>
           <a class="btn-secondary" href="/legacy-gallery/" target="_blank" rel="noreferrer">原始呈現</a>
           <button id="logout-btn" class="btn-secondary">登出</button>
         </div>
@@ -83,9 +85,15 @@
             </article>
             <article class="panel">
               <div class="panel-head">
-                <h3>Optimizer 狀態</h3>
+                <h3>持續優化狀態</h3>
               </div>
               <div id="optimizer-summary" class="stack"></div>
+            </article>
+            <article class="panel">
+              <div class="panel-head">
+                <h3>研究方向導航</h3>
+              </div>
+              <div id="overview-research-list" class="list-stack"></div>
             </article>
           </div>
         </section>
@@ -203,7 +211,7 @@
                   <span>資料集</span>
                   <select id="optimizer-dataset-select"></select>
                 </label>
-                <p class="muted">啟動後會持續監看資料集 revision；只要 admin 或 annotator 保存新標註，就會對新 revision 自動重新排隊比較。</p>
+                <p class="muted">啟動後會持續監看資料集 revision；只要 admin 或 annotator 保存新標註，就會對新 revision 自動重新排隊比較，讓研究節奏往前滾動。</p>
                 <div class="inline-grid">
                   <label><span>Max Trials / Revision</span><input id="optimizer-trials" type="number" min="1" value="4"></label>
                   <label><span>Epochs</span><input id="optimizer-epochs" type="number" min="1" value="5"></label>
@@ -228,7 +236,7 @@
           <div class="panel-grid">
             <article class="panel">
               <div class="panel-head">
-                <h3>比較結果</h3>
+                <h3>驗證與比較結果</h3>
                 <div class="inline-actions">
                   <select id="compare-dataset-select"></select>
                   <button id="refresh-compare-btn" class="btn-secondary">重新整理</button>

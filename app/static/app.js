@@ -78,16 +78,24 @@ function renderOverview(data) {
   const optimizerSummary = document.getElementById("optimizer-summary");
   if (!state.optimizer) {
     optimizerSummary.innerHTML = `<div class="list-item muted">Optimizer 尚未啟動。</div>`;
+  } else {
+    optimizerSummary.innerHTML = `
+      <div class="list-item">
+        <strong>${state.optimizer.enabled ? "執行中" : "已停止"}</strong>
+        <div class="muted">dataset=${state.optimizer.dataset_id || "-"} / revision=r${state.optimizer.dataset_revision || 1} / ${state.optimizer.trials_started || 0} of ${state.optimizer.max_trials || 0}</div>
+        <div class="muted">total trials=${state.optimizer.total_trials_started || 0}</div>
+        <div class="muted">${state.optimizer.last_suggestion || ""}</div>
+      </div>
+    `;
+  }
+
+  const researchList = document.getElementById("overview-research-list");
+  const leadDataset = state.datasets[0];
+  if (!leadDataset) {
+    researchList.innerHTML = `<div class="list-item muted">上傳資料集後，系統會根據標註量、類別缺口、revision 與模型結果整理研究方向。</div>`;
     return;
   }
-  optimizerSummary.innerHTML = `
-    <div class="list-item">
-      <strong>${state.optimizer.enabled ? "執行中" : "已停止"}</strong>
-      <div class="muted">dataset=${state.optimizer.dataset_id || "-"} / revision=r${state.optimizer.dataset_revision || 1} / ${state.optimizer.trials_started || 0} of ${state.optimizer.max_trials || 0}</div>
-      <div class="muted">total trials=${state.optimizer.total_trials_started || 0}</div>
-      <div class="muted">${state.optimizer.last_suggestion || ""}</div>
-    </div>
-  `;
+  researchList.innerHTML = renderResearchDirections(leadDataset.research_directions || []);
 }
 
 function renderRecommendations(items = []) {
@@ -97,6 +105,18 @@ function renderRecommendations(items = []) {
       <strong>${item.title}</strong><br>${item.detail}
     </div>
   `).join("")}</div>`;
+}
+
+function renderResearchDirections(items = []) {
+  if (!items.length) return `<div class="list-item muted">目前還沒有研究導航建議。</div>`;
+  return items.map((item) => `
+    <div class="direction-card">
+      <div class="direction-stage">${item.stage || "研究方向"}</div>
+      <h4>${item.title}</h4>
+      <div class="muted">${item.detail}</div>
+      <div class="direction-action">${item.action || ""}</div>
+    </div>
+  `).join("");
 }
 
 function renderDatasets() {
@@ -109,6 +129,7 @@ function renderDatasets() {
       <div class="muted">影像：${dataset.image_count} / 已標註：${dataset.labeled_image_count} / 未標註：${dataset.unlabeled_image_count}</div>
       <div class="muted">類別：${(dataset.classes || []).join(", ")}</div>
       ${renderRecommendations(dataset.recommendations || [])}
+      ${renderResearchDirections(dataset.research_directions || [])}
     </article>
   `).join("") || `<div class="list-item muted">尚無資料集。</div>`;
 

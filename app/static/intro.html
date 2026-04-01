@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChromoLab | 標註、訓練、驗證與研究導航平台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/landing.css">
+</head>
+<body>
+  <div class="landing-shell">
+    <header class="landing-topbar">
+      <div>
+        <p class="eyebrow">ChromoLab</p>
+        <h1>把資料標註、AI 訓練、測試驗證與研究方向，收進同一個實驗中控台。</h1>
+        <p class="hero-copy">我們以染色體影像作為示範場景，但真正打造的是一個可長期營運的 AI 研究工作流：從資料批次匯入、線上標註、模型比較、持續優化，到下一步研究假說與實驗方向，都能在同一套後台協作完成。</p>
+      </div>
+      <div class="hero-actions">
+        <a class="button button-primary" href="/portal">進入後台</a>
+        <a class="button button-secondary" href="/legacy-gallery/" target="_blank" rel="noreferrer">查看原始呈現</a>
+      </div>
+    </header>
+
+    <section class="hero-grid">
+      <article class="hero-card hero-card-strong">
+        <span>平台定位</span>
+        <strong>不是單次 demo，而是可持續迭代的 AI 研究營運系統。</strong>
+        <p>每一次新資料、每一次 revision、每一輪訓練與失敗案例，都會變成下一輪研究決策的依據。</p>
+      </article>
+      <article class="hero-card">
+        <span>示範場景</span>
+        <strong>染色體、細胞、病理、顯微影像</strong>
+        <p>目前以染色體分割與異常辨識作為操作範例，但平台本質是面向各種需要標註與 AI 訓練閉環的影像專案。</p>
+      </article>
+      <article class="hero-card">
+        <span>核心節奏</span>
+        <strong>資料進來、標註完成、模型比較、驗證回看、研究再出發</strong>
+        <p>讓團隊不是只會「跑模型」，而是真正管理 AI 訓練節奏、資料品質與研究方向。</p>
+      </article>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <p class="eyebrow">核心能力</p>
+        <h2>把研究團隊最常分散在各個工具裡的工作，收在同一套流程。</h2>
+      </div>
+      <div class="capability-grid">
+        <article class="capability-card">
+          <h3>資料批次匯入</h3>
+          <p>支援上傳 YOLO 格式資料集 zip，自動整理 train/val 結構、統計影像量、標註覆蓋率與類別分布。</p>
+        </article>
+        <article class="capability-card">
+          <h3>線上標註協作</h3>
+          <p>標註員可直接在後台做多邊形標註與修正，管理者則能把標註進度轉成下一輪訓練 revision。</p>
+        </article>
+        <article class="capability-card">
+          <h3>訓練排程與控管</h3>
+          <p>管理者可以主動建立模型比較工作，也可以讓系統依資料 revision 自動排隊做持續優化。</p>
+        </article>
+        <article class="capability-card">
+          <h3>模型驗證與回看</h3>
+          <p>每一輪訓練都留下 metrics、preview 與 log，方便快速確認這次進步是來自資料、模型還是設定。</p>
+        </article>
+        <article class="capability-card">
+          <h3>研究方向導航</h3>
+          <p>系統不只回報指標，也會根據資料缺口、類別失衡與 revision 變化，提出下一步研究與驗證方向。</p>
+        </article>
+        <article class="capability-card">
+          <h3>分權限後台</h3>
+          <p>把 admin、annotator、viewer 分開，讓資料治理、標註操作與成果檢視有清楚邊界，避免流程混亂。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section section-alt">
+      <div class="section-head">
+        <p class="eyebrow">操作節奏</p>
+        <h2>你可以把它想成一個研究版的 AI 生產線。</h2>
+      </div>
+      <div class="timeline">
+        <article class="timeline-step">
+          <span>01</span>
+          <h3>收資料</h3>
+          <p>研究人員把新的影像批次或標註資料集匯入，系統立刻盤點目前資料成熟度。</p>
+        </article>
+        <article class="timeline-step">
+          <span>02</span>
+          <h3>做標註</h3>
+          <p>標註員在線上補齊缺口，revision 自動往前推，讓資料版本成為正式實驗單位。</p>
+        </article>
+        <article class="timeline-step">
+          <span>03</span>
+          <h3>跑比較</h3>
+          <p>管理者決定模型組合與訓練條件，或直接啟動 optimizer 進行持續比較與排程。</p>
+        </article>
+        <article class="timeline-step">
+          <span>04</span>
+          <h3>看結果、想下一步</h3>
+          <p>系統結合結果、預覽與資料缺口，回推新的研究方向，而不是只丟一個分數給你。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <p class="eyebrow">研究主張</p>
+        <h2>我們不是只想「訓練出一個模型」，而是想讓研究團隊更快形成下一個問題。</h2>
+      </div>
+      <div class="vision-grid">
+        <article class="vision-card">
+          <h3>從標註走向主動學習</h3>
+          <p>未來可以把模型預標註、高不確定樣本回補與人工覆核串起來，縮短一輪資料整理到再訓練的時間。</p>
+        </article>
+        <article class="vision-card">
+          <h3>從比較走向驗證科學</h3>
+          <p>不只比誰的 mAP 高，而是固定 hard cases、保留版本對照、讓每次改動都能回答「為什麼變好」。</p>
+        </article>
+        <article class="vision-card">
+          <h3>從單一場景走向通用研究平台</h3>
+          <p>染色體只是起點。這套架構未來可以延伸到細胞分析、病理切片、顯微影像與實驗室視覺資料流。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="cta-panel">
+      <div>
+        <p class="eyebrow">現在開始</p>
+        <h2>如果你今天就要上傳一批新資料、安排標註、比兩個模型，這套平台已經能直接做。</h2>
+        <p>如果你要的是更長期的研究營運流程，下一步可以往主動學習、模型輔助標註、固定 benchmark 與研究報表擴充。</p>
+      </div>
+      <div class="hero-actions">
+        <a class="button button-primary" href="/portal">進入後台</a>
+        <a class="button button-secondary" href="https://github.com/weian-nomad/chromolab" target="_blank" rel="noreferrer">查看 GitHub</a>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

@@ -90,6 +90,12 @@ class AnnotationWriteRequest(BaseModel):
 
 
 @app.get("/")
+async def intro() -> FileResponse:
+    return FileResponse(PORTAL_ROOT / "app" / "static" / "intro.html")
+
+
+@app.get("/portal")
+@app.get("/portal/")
 async def index() -> FileResponse:
     return FileResponse(PORTAL_ROOT / "app" / "static" / "index.html")
 

@@ -6,7 +6,9 @@ PORTAL_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 CHROMOSOME_ROOT="$(cd "${PORTAL_ROOT}/.." && pwd)"
 BINARY="${NGROK_BIN:-${CHROMOSOME_ROOT}/ngrok}"
 PORT="${PORT:-8090}"
-NGROK_URL="${NGROK_URL:-tmu-chromosome.ngrok.pizza}"
+NGROK_URL="${NGROK_URL:-https://tmu-chromosome.ngrok.pizza}"
+NGROK_HOST="${NGROK_URL#https://}"
+NGROK_HOST="${NGROK_HOST#http://}"
 LOG_FILE="${PORTAL_ROOT}/ngrok.log"
 PID_FILE="${PORTAL_ROOT}/ngrok.pid"
 DOWNLOAD_TGZ="${CHROMOSOME_ROOT}/ngrok-v3-stable-linux-amd64.tgz"
@@ -20,7 +22,7 @@ if [ -f "${PID_FILE}" ]; then
   fi
 fi
 
-EXISTING_PID="$(pgrep -fo "ngrok http ${PORT} --url=${NGROK_URL}" || true)"
+EXISTING_PID="$(pgrep -fo "ngrok http ${PORT} --url=.*${NGROK_HOST}" || true)"
 if [ -n "${EXISTING_PID}" ]; then
   echo "${EXISTING_PID}" > "${PID_FILE}"
   echo "ngrok already running with pid ${EXISTING_PID}"

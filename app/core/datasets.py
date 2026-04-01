@@ -196,32 +196,32 @@ def generate_recommendations(dataset: dict[str, Any], completed_jobs: list[dict[
         recommendations.append(
             {
                 "severity": "warning",
-                "title": "仍有未標註影像",
-                "detail": f"目前 {unlabeled} 張影像尚未標註，建議先交給 annotator 完成再啟動正式優化。",
+                "title": "標註佇列仍待清理",
+                "detail": f"目前還有 {unlabeled} 張影像未完成標註，建議先分派給標註人員補齊，再進入正式訓練循環。",
             }
         )
     if labeled < 10:
         recommendations.append(
             {
                 "severity": "warning",
-                "title": "標註量偏少",
-                "detail": f"目前只有 {labeled} 張已標註影像，適合先做 1-5 epoch smoke run，確認流程正常。",
+                "title": "目前樣本量偏少",
+                "detail": f"目前只有 {labeled} 張已標註影像，較適合先跑 1 到 5 epoch 的流程驗證，確認資料與訓練設定都正常。",
             }
         )
     if image_count >= 10:
         recommendations.append(
             {
                 "severity": "info",
-                "title": "可啟動模型比較",
-                "detail": "建議先比較 YOLOv8n-seg 與 YOLO11n-seg，並把 mAP50-95(M) 當作主要指標。",
+                "title": "可以啟動基線比較",
+                "detail": "建議先比較 YOLOv8n-seg 與 YOLO11n-seg，並把 mAP50-95(M) 當作第一層基線指標。",
             }
         )
     if task == "segment":
         recommendations.append(
             {
                 "severity": "success",
-                "title": "適合持續優化",
-                "detail": "資料集已採用 YOLO segmentation 格式，可直接交給 optimizer 自動排隊比模型與參數。",
+                "title": "已具備持續優化條件",
+                "detail": "資料集已採用 YOLO segmentation 格式，可以直接交給 optimizer 自動排隊比較模型與參數。",
             }
         )
     if completed_jobs:
@@ -231,10 +231,109 @@ def generate_recommendations(dataset: dict[str, Any], completed_jobs: list[dict[
                 {
                     "severity": "info",
                     "title": "目前最佳模型",
-                    "detail": f"{best_job['model_label']} 目前最佳，{best_job['metric_name']} = {best_job['metric_value']}",
+                    "detail": f"{best_job['model_label']} 暫時領先，{best_job['metric_name']} = {best_job['metric_value']}",
                 }
             )
     return recommendations
+
+
+def generate_research_directions(dataset: dict[str, Any], completed_jobs: list[dict[str, Any]]) -> list[dict[str, str]]:
+    directions: list[dict[str, str]] = []
+    classes = dataset.get("classes") or DEFAULT_CLASS_NAMES
+    distribution = dataset.get("class_distribution") or {}
+    labeled = int(dataset.get("labeled_image_count", 0))
+    unlabeled = int(dataset.get("unlabeled_image_count", 0))
+    revision = int(dataset.get("revision", 1))
+    task = dataset.get("task", "segment")
+
+    if unlabeled:
+        directions.append(
+            {
+                "stage": "資料治理",
+                "title": "先把待標註批次清空",
+                "detail": f"現在還有 {unlabeled} 張影像停在待標註區，這會直接拖慢訓練節奏與研究回饋。",
+                "action": "先指派 annotator 優先完成未標註影像，再用新 revision 觸發下一輪比較。",
+            }
+        )
+
+    if labeled and distribution:
+        missing_classes = [item for item in classes if distribution.get(item, 0) == 0]
+        if missing_classes:
+            directions.append(
+                {
+                    "stage": "標註策略",
+                    "title": "補齊低覆蓋或未出現類別",
+                    "detail": f"目前有 {len(missing_classes)} 個類別尚未在標註中出現，模型容易學成偏科系統。",
+                    "action": f"下一批資料優先補 {', '.join(missing_classes[:3])}{' 等類別' if len(missing_classes) > 3 else ''}，建立更可信的 benchmark。",
+                }
+            )
+
+        class_counts = [(name, distribution.get(name, 0)) for name in classes if distribution.get(name, 0) > 0]
+        if len(class_counts) >= 2:
+            class_counts.sort(key=lambda item: item[1])
+            tail_name, tail_count = class_counts[0]
+            head_name, head_count = class_counts[-1]
+            if head_count >= max(tail_count * 3, 6):
+                directions.append(
+                    {
+                        "stage": "資料平衡",
+                        "title": "建立類別平衡的訓練批次",
+                        "detail": f"{head_name} 與 {tail_name} 的標註量差距較大，容易讓模型只學到大宗訊號。",
+                        "action": f"下一輪標註優先補強 {tail_name}，並保留固定驗證集觀察平衡後的變化。",
+                    }
+                )
+
+    if not completed_jobs:
+        directions.append(
+            {
+                "stage": "基線實驗",
+                "title": "先建立第一版 benchmark",
+                "detail": "目前還沒有完成的模型結果，研究討論容易停留在主觀判斷。",
+                "action": "先跑 YOLOv8n-seg 與 YOLO11n-seg 的基線比較，確立第一版可重複的評估尺標。",
+            }
+        )
+    else:
+        best_job = max(completed_jobs, key=lambda item: item.get("metric_value") or -1)
+        best_metric = float(best_job.get("metric_value") or 0.0)
+        directions.append(
+            {
+                "stage": "模型營運",
+                "title": "把最佳模型轉成穩定測試流程",
+                "detail": f"目前 {best_job['model_label']} 領先，但單次數值不代表真正可部署。",
+                "action": "用固定 hard cases、固定驗證集與 revision 對照，確認最佳模型不是只贏在這一批資料。",
+            }
+        )
+        if best_metric < 0.35:
+            directions.append(
+                {
+                    "stage": "驗證設計",
+                    "title": "需要建立 hard-case 驗證清單",
+                    "detail": "現在的指標仍偏低，代表資料品質、切分方式或標註一致性都還有優化空間。",
+                    "action": "把最容易誤判的染色體案例收成一組 hard-case benchmark，作為每次訓練後的固定回歸測試。",
+                }
+            )
+
+    if task == "segment":
+        directions.append(
+            {
+                "stage": "研究拓展",
+                "title": "導入模型輔助標註與主動學習",
+                "detail": "染色體只是示範場景，真正可複製的是標註者與模型共同迭代的工作流。",
+                "action": "下一步可加入模型預標註、人工覆核與高不確定樣本回補，讓平台從訓練工具升級成研究營運系統。",
+            }
+        )
+
+    if revision >= 2:
+        directions.append(
+            {
+                "stage": "版本科學",
+                "title": "把 revision 當成正式實驗單位",
+                "detail": f"資料目前已經進到 r{revision}，代表你已經有能力做版本間因果對照，而不是只看單次結果。",
+                "action": "固定保留每個 revision 的訓練設定、預覽輸出與指標，讓研究方向從『感覺』變成『可追溯』。",
+            }
+        )
+
+    return directions[:5]
 
 
 def import_dataset_from_zip(dataset_name: str, upload_name: str, payload: bytes, uploaded_by: str) -> dict[str, Any]:
@@ -308,6 +407,7 @@ def import_dataset_from_zip(dataset_name: str, upload_name: str, payload: bytes,
         "dataset_yaml": str(dataset_yaml),
         **stats,
         "recommendations": [],
+        "research_directions": [],
     }
 
     datasets = _load_datasets()
@@ -329,6 +429,7 @@ def refresh_dataset(dataset_id: str, completed_jobs: list[dict[str, Any]]) -> di
             "updated_at": dataset.get("updated_at") or dataset["created_at"],
             "revision": dataset.get("revision", 1),
             "recommendations": generate_recommendations(dataset | stats, completed_jobs),
+            "research_directions": generate_research_directions(dataset | stats, completed_jobs),
         }
         _save_datasets(datasets)
         return datasets[index]
