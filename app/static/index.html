@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chromosome Training Ops Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="shell">
+    <section id="login-view" class="login-panel">
+      <div class="login-card">
+        <p class="eyebrow">Chromosome Ops</p>
+        <h1>訓練與標註後台</h1>
+        <p class="muted">支援分權限、資料上傳、線上標註、模型比較與持續優化。</p>
+        <form id="login-form" class="stack">
+          <label>
+            <span>帳號</span>
+            <input id="login-username" type="text" value="admin" required>
+          </label>
+          <label>
+            <span>密碼</span>
+            <input id="login-password" type="password" value="admin1234" required>
+          </label>
+          <button type="submit">登入</button>
+        </form>
+        <div id="login-status" class="status-line"></div>
+      </div>
+    </section>
+
+    <section id="app-view" class="app-view hidden">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Chromosome Training Ops Portal</p>
+          <h2>染色體模型持續優化平台</h2>
+        </div>
+        <div class="topbar-actions">
+          <div id="user-pill" class="pill"></div>
+          <a class="btn-secondary" href="/legacy-gallery/" target="_blank" rel="noreferrer">原始呈現</a>
+          <button id="logout-btn" class="btn-secondary">登出</button>
+        </div>
+      </header>
+
+      <nav class="tabs">
+        <button class="tab active" data-target="overview-section">總覽</button>
+        <button class="tab" data-target="datasets-section">資料集</button>
+        <button class="tab annotator-only admin-only" data-target="annotation-section">線上標註</button>
+        <button class="tab admin-only" data-target="training-section">訓練與優化</button>
+        <button class="tab" data-target="compare-section">模型比較</button>
+        <button class="tab admin-only" data-target="users-section">使用者</button>
+      </nav>
+
+      <main class="content">
+        <section id="overview-section" class="panel-section">
+          <div class="panel-grid metrics-grid">
+            <article class="metric-card">
+              <p>資料集</p>
+              <strong id="overview-datasets">0</strong>
+            </article>
+            <article class="metric-card">
+              <p>已完成訓練</p>
+              <strong id="overview-completed">0</strong>
+            </article>
+            <article class="metric-card">
+              <p>排隊 / 執行中</p>
+              <strong id="overview-queued">0</strong>
+            </article>
+            <article class="metric-card">
+              <p>目前角色</p>
+              <strong id="overview-role">-</strong>
+            </article>
+          </div>
+          <div class="panel-grid">
+            <article class="panel">
+              <div class="panel-head">
+                <h3>目前資料集</h3>
+                <button id="refresh-overview-btn" class="btn-secondary">重新整理</button>
+              </div>
+              <div id="overview-dataset-list" class="list-stack"></div>
+            </article>
+            <article class="panel">
+              <div class="panel-head">
+                <h3>Optimizer 狀態</h3>
+              </div>
+              <div id="optimizer-summary" class="stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="datasets-section" class="panel-section hidden">
+          <div class="panel-grid">
+            <article class="panel admin-only">
+              <div class="panel-head">
+                <h3>上傳新資料</h3>
+              </div>
+              <form id="dataset-upload-form" class="stack">
+                <label>
+                  <span>資料集名稱</span>
+                  <input id="dataset-name" type="text" placeholder="例如：chromosome-batch-20260330">
+                </label>
+                <label>
+                  <span>YOLO zip</span>
+                  <input id="dataset-file" type="file" accept=".zip" required>
+                </label>
+                <button type="submit">上傳並分析</button>
+                <div id="dataset-upload-status" class="status-line"></div>
+              </form>
+            </article>
+            <article class="panel">
+              <div class="panel-head">
+                <h3>資料集清單</h3>
+                <button id="refresh-datasets-btn" class="btn-secondary">重新整理</button>
+              </div>
+              <div id="dataset-list" class="card-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="annotation-section" class="panel-section hidden">
+          <div class="panel-grid annotation-layout">
+            <article class="panel">
+              <div class="panel-head">
+                <h3>標註任務</h3>
+              </div>
+              <div class="stack">
+                <label>
+                  <span>資料集</span>
+                  <select id="annotation-dataset-select"></select>
+                </label>
+                <label>
+                  <span>影像篩選</span>
+                  <select id="annotation-filter">
+                    <option value="">全部</option>
+                    <option value="unlabeled">未標註</option>
+                    <option value="labeled">已標註</option>
+                  </select>
+                </label>
+                <div id="annotation-image-list" class="thumb-list"></div>
+              </div>
+            </article>
+            <article class="panel annotation-workspace">
+              <div class="panel-head">
+                <h3 id="annotation-title">尚未選擇影像</h3>
+                <div class="inline-actions">
+                  <button id="annotation-complete-btn" class="btn-secondary" type="button">完成多邊形</button>
+                  <button id="annotation-undo-btn" class="btn-secondary" type="button">撤回點位</button>
+                  <button id="annotation-remove-btn" class="btn-secondary" type="button">刪除最後圖形</button>
+                  <button id="annotation-save-btn" type="button">保存標註</button>
+                </div>
+              </div>
+              <div class="annotation-toolbar">
+                <label>
+                  <span>類別</span>
+                  <select id="annotation-class-select"></select>
+                </label>
+                <div id="annotation-status" class="status-line"></div>
+              </div>
+              <canvas id="annotation-canvas"></canvas>
+              <div id="annotation-polygon-list" class="list-stack compact"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="training-section" class="panel-section hidden">
+          <div class="panel-grid">
+            <article class="panel">
+              <div class="panel-head">
+                <h3>模型比較排程</h3>
+              </div>
+              <form id="training-form" class="stack">
+                <label>
+                  <span>資料集</span>
+                  <select id="training-dataset-select"></select>
+                </label>
+                <fieldset class="checkbox-group">
+                  <legend>模型</legend>
+                  <label><input type="checkbox" value="YOLOv8n Segmentation" checked> YOLOv8n Segmentation</label>
+                  <label><input type="checkbox" value="YOLO11n Segmentation" checked> YOLO11n Segmentation</label>
+                </fieldset>
+                <div class="inline-grid">
+                  <label><span>Epochs</span><input id="training-epochs" type="number" min="1" value="5"></label>
+                  <label><span>Image Size</span><input id="training-imgsz" type="number" min="320" value="640"></label>
+                  <label><span>Batch</span><input id="training-batch" type="number" min="1" value="4"></label>
+                  <label><span>Device</span><input id="training-device" type="text" value="0"></label>
+                </div>
+                <button type="submit">建立比較工作</button>
+                <div id="training-status" class="status-line"></div>
+              </form>
+            </article>
+            <article class="panel">
+              <div class="panel-head">
+                <h3>持續優化</h3>
+                <div class="inline-actions">
+                  <button id="optimizer-refresh-btn" class="btn-secondary" type="button">重新整理</button>
+                  <button id="optimizer-stop-btn" class="btn-secondary" type="button">停止</button>
+                </div>
+              </div>
+              <form id="optimizer-form" class="stack">
+                <label>
+                  <span>資料集</span>
+                  <select id="optimizer-dataset-select"></select>
+                </label>
+                <p class="muted">啟動後會持續監看資料集 revision；只要 admin 或 annotator 保存新標註，就會對新 revision 自動重新排隊比較。</p>
+                <div class="inline-grid">
+                  <label><span>Max Trials / Revision</span><input id="optimizer-trials" type="number" min="1" value="4"></label>
+                  <label><span>Epochs</span><input id="optimizer-epochs" type="number" min="1" value="5"></label>
+                  <label><span>Image Sizes</span><input id="optimizer-imgsz" type="text" value="640,768"></label>
+                  <label><span>Batch</span><input id="optimizer-batch" type="number" min="1" value="4"></label>
+                </div>
+                <button type="submit">啟動 Optimizer</button>
+                <div id="optimizer-status-line" class="status-line"></div>
+              </form>
+            </article>
+          </div>
+          <article class="panel">
+            <div class="panel-head">
+              <h3>工作佇列</h3>
+              <button id="refresh-jobs-btn" class="btn-secondary">重新整理</button>
+            </div>
+            <div id="job-list" class="list-stack"></div>
+          </article>
+        </section>
+
+        <section id="compare-section" class="panel-section hidden">
+          <div class="panel-grid">
+            <article class="panel">
+              <div class="panel-head">
+                <h3>比較結果</h3>
+                <div class="inline-actions">
+                  <select id="compare-dataset-select"></select>
+                  <button id="refresh-compare-btn" class="btn-secondary">重新整理</button>
+                </div>
+              </div>
+              <div id="compare-summary" class="stack"></div>
+              <div id="compare-table" class="list-stack"></div>
+            </article>
+            <article class="panel">
+              <div class="panel-head">
+                <h3>預覽輸出</h3>
+              </div>
+              <div id="compare-preview" class="preview-grid"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="users-section" class="panel-section hidden">
+          <div class="panel-grid">
+            <article class="panel">
+              <div class="panel-head">
+                <h3>新增使用者</h3>
+              </div>
+              <form id="user-form" class="stack">
+                <label><span>帳號</span><input id="user-username" type="text" required></label>
+                <label><span>顯示名稱</span><input id="user-display-name" type="text" required></label>
+                <label>
+                  <span>角色</span>
+                  <select id="user-role">
+                    <option value="admin">admin</option>
+                    <option value="annotator">annotator</option>
+                    <option value="viewer">viewer</option>
+                  </select>
+                </label>
+                <label><span>密碼</span><input id="user-password" type="password" minlength="8" required></label>
+                <button type="submit">建立使用者</button>
+                <div id="user-status" class="status-line"></div>
+              </form>
+            </article>
+            <article class="panel">
+              <div class="panel-head">
+                <h3>使用者清單</h3>
+                <button id="refresh-users-btn" class="btn-secondary">重新整理</button>
+              </div>
+              <div id="user-list" class="list-stack"></div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </section>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

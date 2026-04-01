@@ -1,0 +1,20 @@
+[
+  {
+    "username": "admin",
+    "display_name": "Platform Admin",
+    "role": "admin",
+    "password": "admin1234"
+  },
+  {
+    "username": "annotator",
+    "display_name": "Dataset Annotator",
+    "role": "annotator",
+    "password": "annotator1234"
+  },
+  {
+    "username": "viewer",
+    "display_name": "Result Viewer",
+    "role": "viewer",
+    "password": "viewer1234"
+  }
+]
