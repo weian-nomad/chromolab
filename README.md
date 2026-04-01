@@ -1,56 +1,59 @@
 # ChromoLab Ops Portal
 
-ChromoLab 是一套面向研究團隊的 AI 營運後台。
+ChromoLab is an AI operations portal for research teams.
 
-它以染色體影像為示範案例，但真正要解決的問題，不只是「把模型跑起來」，而是把資料標註、模型訓練、驗證比較、版本追蹤與下一步研究方向，收進同一套可持續運轉的流程。
+It uses chromosome imagery as the working example, but the real goal is broader: keep annotation, training control, validation, model comparison, revision tracking, and the next research question inside one system that can keep evolving over time.
 
-## 這個專案想做的事
+中文說明請見 [README.zh-TW.md](README.zh-TW.md).
 
-- 讓 `admin`、`annotator`、`viewer` 有清楚的分工邊界
-- 讓研究人員可以上傳 YOLO 格式資料集並快速盤點成熟度
-- 讓標註人員直接在線上修正 segmentation polygon
-- 讓管理者排模型比較、控制訓練條件、追蹤 revision
-- 讓系統依照資料變化持續做優化與回看
-- 讓結果不只是一個分數，而是能回推出下一步研究方向
+## What This Project Does
 
-## 平台定位
+- Separates responsibilities across `admin`, `annotator`, and `viewer`
+- Accepts YOLO-format dataset ZIP uploads and inspects dataset readiness
+- Lets annotators edit segmentation polygons directly in the browser
+- Lets admins queue model comparisons, tune training settings, and track revisions
+- Runs continuous optimization as new annotations arrive
+- Stores metrics, previews, and logs so results can be reviewed instead of guessed
+- Surfaces research-direction prompts based on coverage gaps, class balance, revisions, and completed jobs
 
-這不是單次 demo，也不是單一模型頁面。
+## Product Positioning
 
-ChromoLab 比較像一個 AI 研究中控台：
+This is not meant to be a one-off demo or a single-model screen.
 
-1. 新資料進來後，先整理資料批次與標註缺口
-2. 標註員在線上補齊 revision
-3. 管理者決定模型比較與持續優化策略
-4. 系統留下 metrics、preview、log 與版本軌跡
-5. 研究團隊根據結果決定下一輪資料與實驗方向
+ChromoLab is closer to an AI research control plane:
 
-## 核心能力
+1. New image batches come in and are organized into managed datasets
+2. Annotators push the dataset forward through new revisions
+3. Admins control comparisons, optimization loops, and training jobs
+4. The platform records metrics, previews, logs, and dataset state over time
+5. The team uses those artifacts to decide what to label next, what to test next, and what research direction should follow
 
-- 分權限後台
-- YOLO zip 資料集匯入
-- 線上標註
-- 模型比較排程
+## Core Capabilities
+
+- Role-based operations portal
+- YOLO ZIP dataset upload
+- Browser-based annotation
+- Model comparison scheduling
 - Continuous optimizer
-- 訓練 preview 與 log 回看
-- 舊版 inference gallery 共存
-- 研究方向導航建議
+- Training preview and log review
+- Legacy inference gallery mounted in the same deployment
+- Research-direction guidance cards
 
-## 技術堆疊
+## Stack
 
 - FastAPI
 - Uvicorn
 - Ultralytics YOLO
 - Vanilla HTML / CSS / JS
 
-## 專案結構
+## Project Layout
 
-- `app/`: API、權限、資料管理、job worker、optimizer、前端頁面
-- `config/`: 預設帳號與種子設定
-- `scripts/`: 訓練、部署、smoke test、tunnel 與啟停腳本
-- `requirements.txt`: Python 相依套件
+- `app/`: API, auth, dataset management, job worker, optimizer, and static UI
+- `config/`: seeded config and default users
+- `scripts/`: training runner, smoke test, deployment, and tunnel lifecycle scripts
+- `requirements.txt`: Python dependencies
 
-## 本機啟動
+## Run Locally
 
 ```bash
 python3 -m venv .venv
@@ -60,15 +63,16 @@ python -m pip install -r requirements.txt
 uvicorn app.main:app --host 0.0.0.0 --port 8090
 ```
 
-啟動後：
+After startup:
 
-- `/` 是中文版介紹頁
-- `/portal` 是後台登入頁
+- `/` serves the English introduction page
+- `/zh-TW` serves the Traditional Chinese introduction page
+- `/portal` serves the admin portal
 
-## 預設帳號
+## Default Accounts
 
 - `admin / admin1234`
 - `annotator / annotator1234`
 - `viewer / viewer1234`
 
-正式環境請先改密碼。
+Change these before production use.

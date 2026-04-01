@@ -94,6 +94,14 @@ async def intro() -> FileResponse:
     return FileResponse(PORTAL_ROOT / "app" / "static" / "intro.html")
 
 
+@app.get("/zh-TW")
+@app.get("/zh-TW/")
+@app.get("/zh")
+@app.get("/zh/")
+async def intro_zh_tw() -> FileResponse:
+    return FileResponse(PORTAL_ROOT / "app" / "static" / "intro-zh-TW.html")
+
+
 @app.get("/portal")
 @app.get("/portal/")
 async def index() -> FileResponse:

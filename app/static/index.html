@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,19 +14,19 @@
     <section id="login-view" class="login-panel">
       <div class="login-card">
         <p class="eyebrow">ChromoLab</p>
-        <h1>標註、訓練與研究營運後台</h1>
-        <p class="muted">以染色體影像為示範，但真正的核心是讓資料治理、AI 訓練、測試驗證與研究方向可以被同一套流程管理。</p>
-        <p class="muted"><a href="/" class="inline-link">先看中文版介紹頁</a></p>
+        <h1>Annotation, Training, and Research Operations Portal</h1>
+        <p class="muted">Chromosome imagery is the working example, but the real product is an operating layer for data governance, AI training, validation, and research direction.</p>
+        <p class="muted"><a href="/" class="inline-link">English intro</a> · <a href="/zh-TW" class="inline-link">中文版介紹</a></p>
         <form id="login-form" class="stack">
           <label>
-            <span>帳號</span>
+            <span>Username</span>
             <input id="login-username" type="text" value="admin" required>
           </label>
           <label>
-            <span>密碼</span>
+            <span>Password</span>
             <input id="login-password" type="password" value="admin1234" required>
           </label>
-          <button type="submit">登入</button>
+          <button type="submit">Sign In</button>
         </form>
         <div id="login-status" class="status-line"></div>
       </div>
@@ -36,13 +36,14 @@
       <header class="topbar">
         <div>
           <p class="eyebrow">ChromoLab Ops Portal</p>
-          <h2>標註、訓練、驗證與研究導航平台</h2>
+          <h2>Annotation, Training, Validation, and Research Navigation</h2>
         </div>
         <div class="topbar-actions">
           <div id="user-pill" class="pill"></div>
-          <a class="btn-secondary" href="/">中文版介紹</a>
-          <a class="btn-secondary" href="/legacy-gallery/" target="_blank" rel="noreferrer">原始呈現</a>
-          <button id="logout-btn" class="btn-secondary">登出</button>
+          <a class="btn-secondary" href="/">English Intro</a>
+          <a class="btn-secondary" href="/zh-TW">中文版介紹</a>
+          <a class="btn-secondary" href="/legacy-gallery/" target="_blank" rel="noreferrer">Legacy Gallery</a>
+          <button id="logout-btn" class="btn-secondary">Log Out</button>
         </div>
       </header>
 
