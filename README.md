@@ -1,4 +1,4 @@
-# Chromosome Training Ops Portal
+# ChromoLab Ops Portal
 
 A FastAPI-based admin portal for chromosome dataset operations.
 

@@ -21,7 +21,7 @@ JOBS_FILE = STATE_ROOT / "jobs.json"
 OPTIMIZER_FILE = STATE_ROOT / "optimizer.json"
 
 DEFAULT_USERS_FILE = CONFIG_ROOT / "default_users.json"
-PORTAL_TITLE = "Chromosome Training Ops Portal"
+PORTAL_TITLE = "ChromoLab Ops Portal"
 DEFAULT_CLASS_NAMES = [
     "Centromere",
     "Chromosome",
